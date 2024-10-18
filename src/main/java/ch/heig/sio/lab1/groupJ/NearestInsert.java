@@ -4,8 +4,8 @@ import ch.heig.sio.lab1.tsp.TspData;
 import java.util.List;
 
 /**
- * Implémentation de l'heuristique d'insertion par la ville la plus proche pour le problème dTSP.
- * Cette heuristique choisit, à chaque étape, la ville non visitée la plus proche de l'une des villes dans la tournée.
+ Implémente l'heuristique d'insertion de la ville la plus proche pour le TSP.
+ * @author Jarod Streckeisen, Timothée Van Hove
  */
 public class NearestInsert extends BaseInsertionHeuristic {
 
@@ -18,15 +18,15 @@ public class NearestInsert extends BaseInsertionHeuristic {
      */
     @Override
     protected int selectCityToInsert(TspData data, List<Integer> tour, List<Integer> unvisitedCities) {
-        int closestCity = -1;  // Initialiser la variable pour stocker la ville la plus proche.
-        long minDistance = Long.MAX_VALUE;  // Initialiser la distance minimale avec une valeur très élevée.
+        int closestCity = -1;
+        long minDistance = Long.MAX_VALUE;
 
         // Parcourt toutes les villes non visitées.
         for (int city : unvisitedCities) {
             // Trouve la distance la plus courte de cette ville à une ville déjà dans la tournée.
             long shortestDistanceToTour = findShortestDistanceToTour(data, tour, city);
 
-            // Si cette distance est la plus petite rencontrée jusqu'à présent, on met à jour les valeurs.
+            // Mise à jour si la distance est la plus petite
             if (shortestDistanceToTour < minDistance) {
                 minDistance = shortestDistanceToTour;
                 closestCity = city;

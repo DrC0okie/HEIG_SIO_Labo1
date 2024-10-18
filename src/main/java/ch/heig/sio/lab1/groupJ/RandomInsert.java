@@ -5,8 +5,8 @@ import java.util.*;
 
 /**
  * Implémente l'heuristique d'insertion aléatoire pour le problème TSP.
- * Hérite de BaseInsertionHeuristic, qui gère la structure générale de la tournée et l'insertion progressive des villes.
  * Dans cette heuristique, à chaque étape, une ville non visitée est sélectionnée aléatoirement pour être insérée.
+ * @author Jarod Streckeisen, Timothée Van Hove
  */
 public class RandomInsert extends BaseInsertionHeuristic {
 
