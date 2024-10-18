@@ -1,55 +1,38 @@
 package ch.heig.sio.lab1.groupJ;
 
-import ch.heig.sio.lab1.display.ObservableTspConstructiveHeuristic;
-import ch.heig.sio.lab1.display.TspHeuristicObserver;
 import ch.heig.sio.lab1.tsp.TspData;
-import ch.heig.sio.lab1.tsp.TspTour;
-
 import java.util.*;
 
-public class RandomInsert implements ObservableTspConstructiveHeuristic {
+/**
+ * Implémente l'heuristique d'insertion aléatoire pour le problème TSP.
+ * Hérite de BaseInsertionHeuristic, qui gère la structure générale de la tournée et l'insertion progressive des villes.
+ * Dans cette heuristique, à chaque étape, une ville non visitée est sélectionnée aléatoirement pour être insérée.
+ */
+public class RandomInsert extends BaseInsertionHeuristic {
 
+    private static final long SEED = 0x134DA73;
+    private final Random random;
 
-    static Random generator = new Random(0x134DA73);
-
-    private int getInsertionPoint(TspData data,int currentCity,int[] tour,int nbCity){
-        int bestPoint = 0;
-        int bestCurrentLength = Integer.MAX_VALUE;
-        for(int i = 0 ; i < nbCity ; i++ ){
-            int length = data.getDistance(tour[i],currentCity) + data.getDistance(currentCity, tour[i+1]);
-            if(length < bestCurrentLength){
-                bestCurrentLength = length;
-                bestPoint = i;
-            }
-        }
-        return bestPoint;
+    /**
+     * Initialise le générateur de nombres pseudo-aléatoires avec la graine définie.
+     */
+    public RandomInsert() {
+        this.random = new Random(SEED);
     }
+
+    /**
+     * Sélectionne une ville non visitée aléatoirement dans la liste des villes non visitées.
+     * La ville sélectionnée est ensuite retirée de cette liste.
+     *
+     * @param data L'instance de données du TSP (non utilisée directement ici, mais nécessaire pour l'interface).
+     * @param tour La liste des villes déjà insérées dans la tournée (non utilisée ici pour le choix aléatoire).
+     * @param unvisitedCities La liste des villes restantes qui ne sont pas encore dans la tournée.
+     * @return L'index de la ville choisie aléatoirement et retirée de la liste des villes non visitées.
+     */
     @Override
-    public TspTour computeTour(TspData data, int startCityIndex, TspHeuristicObserver observer) {
-        int n = data.getNumberOfCities();
-
-        int[]tour = new int[n];
-        ArrayList<Integer> cities = new ArrayList<>();
-        for(int i = 0 ; i < n ; i++) {
-            cities.add(i);
-        }
-        Collections.shuffle(cities,generator);
-
-        int currentCity = cities.get(0);
-        int length = data.getDistance(startCityIndex,currentCity);
-        tour[0] = startCityIndex;
-        tour[1] = currentCity;
-
-        for(int i = 1; i <= n ; i ++){
-            //Selectionne une ville aléatoire
-            currentCity = cities.get(i);
-            //Calculer où insérer la ville sélectionner dans le tour
-            int bestInsertionPointIndex = getInsertionPoint(data,currentCity,tour,i+1);
-
-            //Mettre à jour tour[]
-        }
-        //observer.update();
-        return null;
+    protected int selectCityToInsert(TspData data, List<Integer> tour, List<Integer> unvisitedCities) {
+        int nextCityIndex = random.nextInt(unvisitedCities.size());
+        return unvisitedCities.remove(nextCityIndex);
     }
-
 }
+
