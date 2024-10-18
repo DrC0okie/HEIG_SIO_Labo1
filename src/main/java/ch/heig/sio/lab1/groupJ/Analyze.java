@@ -3,10 +3,6 @@ package ch.heig.sio.lab1.groupJ;
 public final class Analyze {
   public static void main(String[] args) {
     // TODO
-    //  - Renommer le package ;
-    //  - Implémenter les différentes heuristiques en écrivant le code dans ce package, et uniquement celui-ci
-    //    (sous-packages et packages de tests ok) ;
-    //  - Factoriser le code commun entre les différentes heuristiques ;
     //  - Documentation soignée comprenant :
     //    - la javadoc, avec auteurs et description des implémentations ;
     //    - des commentaires sur les différentes parties de vos algorithmes.

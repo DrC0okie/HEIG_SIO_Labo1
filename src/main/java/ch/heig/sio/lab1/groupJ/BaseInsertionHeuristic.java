@@ -5,13 +5,14 @@ import ch.heig.sio.lab1.display.TspHeuristicObserver;
 import ch.heig.sio.lab1.tsp.Edge;
 import ch.heig.sio.lab1.tsp.TspData;
 import ch.heig.sio.lab1.tsp.TspTour;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * Gère l'initialisation du tour et l'insertion progressive des villes, tout en permettant
- * aux sous-classes de définir leur propre stratégie pour choisir la ville à insérer.
+ * Gère l'insertion progressive des villes, tout en permettant aux sous-classes de définir leur stratégie d'insertion
+ *
  * @author Jarod Streckeisen, Timothée Van Hove
  */
 public abstract class BaseInsertionHeuristic implements ObservableTspConstructiveHeuristic {
