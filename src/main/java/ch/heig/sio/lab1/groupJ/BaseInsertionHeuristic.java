@@ -120,7 +120,7 @@ public abstract class BaseInsertionHeuristic implements ObservableTspConstructiv
      * @return L'augmentation de la longueur de la tournée.
      */
     private static long calculateLengthIncrease(TspData data, List<Integer> tour, int cityToInsert, int position) {
-        int prevCity = tour.get(position - 1);
+        int prevCity = (position == 0) ? tour.getLast() : tour.get(position - 1);
         int nextCity = tour.get(position % tour.size());
 
         // Calcul de la différence de longueur après l'insertion.
