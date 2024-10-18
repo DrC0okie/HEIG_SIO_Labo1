@@ -1,12 +1,11 @@
 package ch.heig.sio.lab1.groupJ;
 
 import ch.heig.sio.lab1.tsp.TspData;
+
 import java.util.*;
 
 /**
- * Implémente l'heuristique d'insertion aléatoire pour le problème TSP.
- * Hérite de BaseInsertionHeuristic, qui gère la structure générale de la tournée et l'insertion progressive des villes.
- * Dans cette heuristique, à chaque étape, une ville non visitée est sélectionnée aléatoirement pour être insérée.
+ * Implémente l'heuristique d'insertion aléatoire pour le TSP.
  */
 public class RandomInsert extends BaseInsertionHeuristic {
 
@@ -22,10 +21,9 @@ public class RandomInsert extends BaseInsertionHeuristic {
 
     /**
      * Sélectionne une ville non visitée aléatoirement dans la liste des villes non visitées.
-     * La ville sélectionnée est ensuite retirée de cette liste.
      *
-     * @param data L'instance de données du TSP (non utilisée directement ici, mais nécessaire pour l'interface).
-     * @param tour La liste des villes déjà insérées dans la tournée (non utilisée ici pour le choix aléatoire).
+     * @param data            L'instance de données du TSP (non utilisée directement ici, mais nécessaire pour l'interface).
+     * @param tour            La liste des villes déjà insérées dans la tournée (non utilisée ici pour le choix aléatoire).
      * @param unvisitedCities La liste des villes restantes qui ne sont pas encore dans la tournée.
      * @return L'index de la ville choisie aléatoirement et retirée de la liste des villes non visitées.
      */
