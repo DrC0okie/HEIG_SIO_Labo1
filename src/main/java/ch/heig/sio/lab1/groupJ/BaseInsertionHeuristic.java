@@ -5,7 +5,6 @@ import ch.heig.sio.lab1.display.TspHeuristicObserver;
 import ch.heig.sio.lab1.tsp.Edge;
 import ch.heig.sio.lab1.tsp.TspData;
 import ch.heig.sio.lab1.tsp.TspTour;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,17 +33,34 @@ public abstract class BaseInsertionHeuristic implements ObservableTspConstructiv
 
         // Initialise la liste des villes qui ne sont pas encore visitées.
         List<Integer> unvisitedCities = initializeUnvisitedCities(n, startCityIndex);
+
+        // Initialise un tableau pour mémoriser la distance minimale entre chaque ville non visitée et la tournée actuelle.
+        long[] minDistances = new long[n];
+        for (int i = 0; i < n; i++) {
+            if (i == startCityIndex) {
+                minDistances[i] = Long.MAX_VALUE; // Distance infinie pour la ville de départ, déjà dans la tournée.
+            } else {
+                minDistances[i] = data.getDistance(startCityIndex, i); // Distance initiale par rapport à la ville de départ.
+            }
+        }
+
         long totalLength = 0;
 
         // Boucle jusqu'à ce que toutes les villes aient été insérées dans la tournée.
         while (!unvisitedCities.isEmpty()) {
-            // Sélection de la prochaine ville à insérer (définie par la sous-classe).
-            int cityToInsert = selectCityToInsert(data, tour, unvisitedCities);
+            // Sélection de la prochaine ville à insérer (définie par la sous-classe) en fonction de la distance minimale mémorisée.
+            int cityToInsert = selectCityToInsert(minDistances, unvisitedCities);
 
+            // Trouver la meilleure position pour insérer la ville choisie dans la tournée.
             int bestPosition = findBestInsertionPosition(data, tour, cityToInsert);
             long minLengthIncrease = calculateLengthIncrease(data, tour, cityToInsert, bestPosition);
+
+            // Insérer la ville dans la meilleure position et mettre à jour la longueur totale.
             tour.add(bestPosition, cityToInsert);
             totalLength += minLengthIncrease;
+
+            // Mettre à jour les distances minimales des villes non visitées après l'insertion.
+            updateMinDistances(data, minDistances, cityToInsert, unvisitedCities);
 
             // Notifier l'observateur pour visualiser la progression de la tournée.
             observer.update(tourToEdges(tour));
@@ -55,14 +71,13 @@ public abstract class BaseInsertionHeuristic implements ObservableTspConstructiv
     }
 
     /**
-     * définit comment choisir la prochaine ville à insérer dans la tournée.
-     *
-     * @param data            L'instance de données du TSP.
-     * @param tour            La liste des villes déjà insérées dans la tournée.
+     * Définit comment choisir la prochaine ville à insérer dans la tournée.
+     * Cette méthode doit être implémentée par les sous-classes en utilisant les distances minimales calculées.
+     * @param minDistances    Tableau des distances minimales entre les villes non visitées et la tournée.
      * @param unvisitedCities La liste des villes restantes à visiter.
      * @return L'index de la ville à insérer.
      */
-    protected abstract int selectCityToInsert(TspData data, List<Integer> tour, List<Integer> unvisitedCities);
+    protected abstract int selectCityToInsert(long[] minDistances, List<Integer> unvisitedCities);
 
     /**
      * Initialise la liste des villes non visitées, en excluant la ville de départ.
@@ -73,11 +88,26 @@ public abstract class BaseInsertionHeuristic implements ObservableTspConstructiv
      */
     private static List<Integer> initializeUnvisitedCities(int n, int startCityIndex) {
         List<Integer> unvisitedCities = new ArrayList<>();
-        // Parcourt toutes les villes et ajoute celles qui ne sont pas la ville de départ.
         for (int i = 0; i < n; i++) {
             if (i != startCityIndex) unvisitedCities.add(i);
         }
         return unvisitedCities;
+    }
+
+    /**
+     * Met à jour les distances minimales des villes non visitées après l'insertion d'une nouvelle ville dans la tournée.
+     * @param data            L'instance de données du TSP.
+     * @param minDistances    Tableau des distances minimales pour les villes non visitées.
+     * @param cityInserted    L'index de la ville qui vient d'être insérée dans la tournée.
+     * @param unvisitedCities La liste des villes restantes à visiter.
+     */
+    private static void updateMinDistances(TspData data, long[] minDistances, int cityInserted, List<Integer> unvisitedCities) {
+        for (int city : unvisitedCities) {
+            long distanceToNewCity = data.getDistance(city, cityInserted);
+            if (distanceToNewCity < minDistances[city]) {
+                minDistances[city] = distanceToNewCity; // Met à jour si la nouvelle ville est plus proche.
+            }
+        }
     }
 
     /**
@@ -95,12 +125,10 @@ public abstract class BaseInsertionHeuristic implements ObservableTspConstructiv
         // Parcourt chaque paire consécutive de villes dans la tournée.
         for (int i = 0; i < tour.size(); i++) {
             int prevCity = tour.get(i);
-            int nextCity = tour.get((i + 1) % tour.size());  // La tournée est circulaire
+            int nextCity = getNextCityInTour(tour, i);  // Gestion circulaire de la tournée.
 
             // Calcul de l'augmentation de la longueur si la ville est insérée entre prevCity et nextCity.
-            long lengthIncrease = data.getDistance(prevCity, cityToInsert) +
-                    data.getDistance(cityToInsert, nextCity) -
-                    data.getDistance(prevCity, nextCity);
+            long lengthIncrease = calculateLengthDifference(data, prevCity, cityToInsert, nextCity);
 
             // Si l'augmentation de la longueur est inférieure à celle actuellement stockée, mettre à jour les valeurs.
             if (lengthIncrease < minLengthIncrease) {
@@ -123,11 +151,18 @@ public abstract class BaseInsertionHeuristic implements ObservableTspConstructiv
     private static long calculateLengthIncrease(TspData data, List<Integer> tour, int cityToInsert, int position) {
         int prevCity = (position == 0) ? tour.getLast() : tour.get(position - 1);
         int nextCity = tour.get(position % tour.size());
+        return calculateLengthDifference(data, prevCity, cityToInsert, nextCity);
+    }
 
-        // Calcul de la différence de longueur après l'insertion.
-        return data.getDistance(prevCity, cityToInsert) +
-                data.getDistance(cityToInsert, nextCity) -
-                data.getDistance(prevCity, nextCity);
+    /**
+     * Récupère la ville suivante dans la tournée en tenant compte du caractère circulaire de la tournée.
+     *
+     * @param tour        La liste des villes dans la tournée.
+     * @param currentIndex L'index actuel dans la tournée.
+     * @return L'index de la ville suivante dans la tournée.
+     */
+    private static int getNextCityInTour(List<Integer> tour, int currentIndex) {
+        return tour.get((currentIndex + 1) % tour.size());
     }
 
     /**
@@ -143,5 +178,11 @@ public abstract class BaseInsertionHeuristic implements ObservableTspConstructiv
             edges.add(new Edge(tour.get(i), tour.get((i + 1) % tour.size())));  // La tournée est circulaire.
         }
         return edges.iterator();
+    }
+
+    private static long calculateLengthDifference(TspData data, int prevCity, int cityToInsert, int nextCity) {
+        return data.getDistance(prevCity, cityToInsert) +
+                data.getDistance(cityToInsert, nextCity) -
+                data.getDistance(prevCity, nextCity);
     }
 }
