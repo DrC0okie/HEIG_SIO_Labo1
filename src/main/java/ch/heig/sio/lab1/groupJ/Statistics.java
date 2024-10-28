@@ -1,13 +1,20 @@
 package ch.heig.sio.lab1.groupJ;
 
+import java.util.Map;
+
 public class Statistics {
     private String fileName;
     private long minLength;
     private long maxLength;
     private double avgLength;
+
+    private double avgPercentageAboveOptimal;
+    private double minPercentageAboveOptimal;
+    private double maxPercentageAboveOptimal;
     private double minExecutionTime;
     private double maxExecutionTime;
     private double avgExecutionTime;
+    private Map<String,Long> optimalLength;
 
     public String getFileName() { return fileName; }
     public long getMinLength() { return minLength; }
@@ -16,7 +23,19 @@ public class Statistics {
     public double getMinExecutionTime() { return minExecutionTime; }
     public double getMaxExecutionTime() { return maxExecutionTime; }
     public double getAvgExecutionTime() { return avgExecutionTime; }
-    public Statistics(String fileName, long[] lengths, double[] executionTimes) {
+
+    public double getAvgPercentageAboveOptimal() {
+        return avgPercentageAboveOptimal;
+    }
+    public double getMinPercentageAboveOptimal() {
+        return minPercentageAboveOptimal;
+    }
+
+
+    public double getMaxPercentageAboveOptimal() {
+        return maxPercentageAboveOptimal;
+    }
+    public Statistics(String fileName, long[] lengths, double[] executionTimes, Map<String,Long> optimalLength) {
         if (fileName == null || fileName.trim().isEmpty()) {
             throw new IllegalArgumentException("File name cannot be null or empty");
         }
@@ -26,7 +45,7 @@ public class Statistics {
         if (lengths.length != executionTimes.length) {
             throw new IllegalArgumentException("Input arrays must have the same length");
         }
-
+        this.optimalLength = optimalLength;
         this.fileName = fileName;
         minLength = maxLength = lengths[0];
         minExecutionTime = maxExecutionTime = executionTimes[0];
@@ -42,7 +61,13 @@ public class Statistics {
             totalExecutionTime += executionTimes[i];
         }
 
+
         avgLength = (double) totalLength / lengths.length;
+        String filenameWithoutExtension = fileName.substring(0, fileName.lastIndexOf('.'));
+        long currentOptLength = optimalLength.get(filenameWithoutExtension);
+        avgPercentageAboveOptimal = (avgLength - currentOptLength)/currentOptLength * 100;
+        minPercentageAboveOptimal = ((double)minLength - currentOptLength)/currentOptLength * 100;
+        maxPercentageAboveOptimal = ((double)maxLength - currentOptLength)/currentOptLength * 100;
         avgExecutionTime = totalExecutionTime / executionTimes.length;
     }
 }

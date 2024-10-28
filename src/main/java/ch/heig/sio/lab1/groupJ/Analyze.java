@@ -5,11 +5,22 @@ import ch.heig.sio.lab1.tsp.TspTour;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class Analyze {
 
   private static final double NANO_TO_MILLIS  = 1_000_000.0;
   public static void main(String[] args) throws IOException {
+
+    Map<String, Long> optimalLengths = new HashMap<>();
+    optimalLengths.put("pcb442", 50778L);
+    optimalLengths.put("att532", 86729L);
+    optimalLengths.put("u574", 36905L);
+    optimalLengths.put("pcb1173", 56892L);
+    optimalLengths.put("nrw1379", 56638L);
+    optimalLengths.put("u1817", 57201L);
+
     // TODO
     //  - Documentation soignée comprenant :
     //    - la javadoc, avec auteurs et description des implémentations ;
@@ -25,9 +36,9 @@ public final class Analyze {
 
     for (File dataFile : dataFiles) {
 
-      Statistics RIStatistics = computeStatistics(RIHeuristic, dataFile);
-      Statistics FIStatistics = computeStatistics(FIHeuristic, dataFile);
-      Statistics NIStatistics = computeStatistics(NIHeuristic, dataFile);
+      Statistics RIStatistics = computeStatistics(RIHeuristic, dataFile,optimalLengths);
+      Statistics FIStatistics = computeStatistics(FIHeuristic, dataFile,optimalLengths);
+      Statistics NIStatistics = computeStatistics(NIHeuristic, dataFile,optimalLengths);
 
       StatisticsOutputFormatter.printHeuristicComparison(RIStatistics, NIStatistics, FIStatistics);
     }
@@ -50,7 +61,7 @@ public final class Analyze {
    * @param file The file we want to make statistics on
    * @return a new statistics
    */
-  static public Statistics computeStatistics(BaseInsertionHeuristic heuristic,File file) throws IOException {
+  static public Statistics computeStatistics(BaseInsertionHeuristic heuristic,File file,Map<String,Long> optimalLength) throws IOException {
     String fileName = file.getName();
     TspData data = TspData.fromFile(file.getCanonicalPath());
 
@@ -69,6 +80,6 @@ public final class Analyze {
       length[i] = tour.length();
       executionTime[i] =  duration / NANO_TO_MILLIS;
     }
-    return new Statistics(fileName,length,executionTime);
+    return new Statistics(fileName,length,executionTime,optimalLength);
   }
 }
