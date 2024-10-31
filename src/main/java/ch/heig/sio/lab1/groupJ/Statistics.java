@@ -14,7 +14,7 @@ public class Statistics {
     private double minExecutionTime;
     private double maxExecutionTime;
     private double avgExecutionTime;
-    private Map<String,Long> optimalLength;
+    private long optimalLength;
 
     public String getFileName() { return fileName; }
     public long getMinLength() { return minLength; }
@@ -23,7 +23,7 @@ public class Statistics {
     public double getMinExecutionTime() { return minExecutionTime; }
     public double getMaxExecutionTime() { return maxExecutionTime; }
     public double getAvgExecutionTime() { return avgExecutionTime; }
-
+    public long getOptimalLength() {return optimalLength;}
     public double getAvgPercentageAboveOptimal() {
         return avgPercentageAboveOptimal;
     }
@@ -35,7 +35,15 @@ public class Statistics {
     public double getMaxPercentageAboveOptimal() {
         return maxPercentageAboveOptimal;
     }
-    public Statistics(String fileName, long[] lengths, double[] executionTimes, Map<String,Long> optimalLength) {
+
+    /***
+     *
+     * @param fileName Name of the file processed
+     * @param lengths Length for all cities
+     * @param executionTimes Execution time for all cities
+     * @param optimalLength Map of optimal length
+     */
+    public Statistics(String fileName, long[] lengths, double[] executionTimes, long optimalLength) {
         if (fileName == null || fileName.trim().isEmpty()) {
             throw new IllegalArgumentException("File name cannot be null or empty");
         }
@@ -63,11 +71,9 @@ public class Statistics {
 
 
         avgLength = (double) totalLength / lengths.length;
-        String filenameWithoutExtension = fileName.substring(0, fileName.lastIndexOf('.'));
-        long currentOptLength = optimalLength.get(filenameWithoutExtension);
-        avgPercentageAboveOptimal = (avgLength - currentOptLength)/currentOptLength * 100;
-        minPercentageAboveOptimal = ((double)minLength - currentOptLength)/currentOptLength * 100;
-        maxPercentageAboveOptimal = ((double)maxLength - currentOptLength)/currentOptLength * 100;
+        avgPercentageAboveOptimal = (avgLength - optimalLength)/optimalLength * 100;
+        minPercentageAboveOptimal = ((double)minLength - optimalLength)/optimalLength * 100;
+        maxPercentageAboveOptimal = ((double)maxLength - optimalLength)/optimalLength * 100;
         avgExecutionTime = totalExecutionTime / executionTimes.length;
     }
 }

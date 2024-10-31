@@ -11,8 +11,15 @@ import java.util.Map;
 public final class Analyze {
 
   private static final double NANO_TO_MILLIS  = 1_000_000.0;
-  public static void main(String[] args) throws IOException {
 
+  /***
+   * Main function for Statistics calculation.
+   * Read all file in "data" folder and perform statistics for every euristics
+   * @param args
+   * @throws IOException
+   */
+  public static void main(String[] args) throws IOException {
+    //Map contenant les valeurs optimales pour chaque fichier.
     Map<String, Long> optimalLengths = new HashMap<>();
     optimalLengths.put("pcb442", 50778L);
     optimalLengths.put("att532", 86729L);
@@ -21,10 +28,6 @@ public final class Analyze {
     optimalLengths.put("nrw1379", 56638L);
     optimalLengths.put("u1817", 57201L);
 
-    // TODO
-    //  - Documentation soignée comprenant :
-    //    - la javadoc, avec auteurs et description des implémentations ;
-    //    - des commentaires sur les différentes parties de vos algorithmes.
     File dataFolder = new File("data");
     File[] dataFiles = dataFolder.listFiles();
     if(dataFiles == null){
@@ -42,35 +45,24 @@ public final class Analyze {
 
       StatisticsOutputFormatter.printHeuristicComparison(RIStatistics, NIStatistics, FIStatistics);
     }
-
-    // Longueurs optimales :
-    // pcb442 : 50778
-    // att532 : 86729
-    // u574 : 36905
-    // pcb1173   : 56892
-    // nrw1379  : 56638
-    // u1817 : 57201
-
-    // Exemple de lecture d'un jeu de données :
-    // TspData data = TspData.fromFile("data/att532.dat");
   }
 
   /***
    * Compute statistics for a single file for a given heuristic
-   * @param heuristic The heuristic to make statistics on
+   * @param heuristic The heuristic used to compute the statistics
    * @param file The file we want to make statistics on
-   * @return a new statistics
+   * @return a new Statistics instance
    */
   static public Statistics computeStatistics(BaseInsertionHeuristic heuristic,File file,Map<String,Long> optimalLength) throws IOException {
     String fileName = file.getName();
     TspData data = TspData.fromFile(file.getCanonicalPath());
 
     int nbCities = data.getNumberOfCities();
+    //Store length and execution time  for every start city
     long[] length = new long[nbCities];
     double[] executionTime = new double[nbCities];
-
+    //Compute tour for every start city
     for(int i = 0; i < nbCities ; i++ ){
-
       long startTime = System.nanoTime();
       TspTour tour = heuristic.computeTour(data,i);
       long endTime = System.nanoTime();
@@ -80,6 +72,8 @@ public final class Analyze {
       length[i] = tour.length();
       executionTime[i] =  duration / NANO_TO_MILLIS;
     }
-    return new Statistics(fileName,length,executionTime,optimalLength);
+    String filenameWithoutExtension = fileName.substring(0, fileName.lastIndexOf('.'));
+    long currentOptimalLength = optimalLength.get(filenameWithoutExtension);
+    return new Statistics(fileName,length,executionTime,currentOptimalLength);
   }
 }
