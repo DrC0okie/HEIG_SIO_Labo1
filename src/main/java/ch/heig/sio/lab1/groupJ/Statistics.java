@@ -3,18 +3,17 @@ package ch.heig.sio.lab1.groupJ;
 import java.util.Map;
 
 public class Statistics {
-    private String fileName;
+    private final String fileName;
     private long minLength;
     private long maxLength;
-    private double avgLength;
-
-    private double avgPercentageAboveOptimal;
-    private double minPercentageAboveOptimal;
-    private double maxPercentageAboveOptimal;
+    private final double avgLength;
+    private final double avgPercentageAboveOptimal;
+    private final double minPercentageAboveOptimal;
+    private final double maxPercentageAboveOptimal;
     private double minExecutionTime;
     private double maxExecutionTime;
-    private double avgExecutionTime;
-    private long optimalLength;
+    private final double avgExecutionTime;
+    private final long optimalLength;
 
     public String getFileName() { return fileName; }
     public long getMinLength() { return minLength; }

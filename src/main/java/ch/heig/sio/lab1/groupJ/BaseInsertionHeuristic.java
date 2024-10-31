@@ -54,7 +54,7 @@ public abstract class BaseInsertionHeuristic implements ObservableTspConstructiv
             // Trouver la meilleure position pour insérer la ville choisie dans la tournée.
             int bestPosition = findBestInsertionPosition(data, tour, cityToInsert);
             long minLengthIncrease = calculateLengthIncrease(data, tour, cityToInsert, bestPosition);
-
+            
             // Insérer la ville dans la meilleure position et mettre à jour la longueur totale.
             tour.add(bestPosition, cityToInsert);
             totalLength += minLengthIncrease;

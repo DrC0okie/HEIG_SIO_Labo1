@@ -4,9 +4,7 @@ import ch.heig.sio.lab1.tsp.TspConstructiveHeuristic;
 import ch.heig.sio.lab1.tsp.TspData;
 import ch.heig.sio.lab1.tsp.TspTour;
 import org.opentest4j.AssertionFailedError;
-
 import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class TestUtils {
