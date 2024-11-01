@@ -1,6 +1,5 @@
 package ch.heig.sio.lab1.groupJ;
 
-import ch.heig.sio.lab1.tsp.TspData;
 import java.util.*;
 
 /**

@@ -2,6 +2,11 @@ package ch.heig.sio.lab1.groupJ;
 
 import java.util.Arrays;
 
+/**
+ * This class provides statistics for TSP heuristics by computing min, max, avg tour lengths and as execution times.
+ * It also calculates how much the computed tour lengths exceed an optimal solution.
+ * @author Jarod Streckeisen, Timothée Van Hove
+ */
 public class Statistics {
     private final String fileName;
     private final long minLength;

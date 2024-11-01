@@ -2,12 +2,15 @@ package ch.heig.sio.lab1.groupJ;
 
 import ch.heig.sio.lab1.tsp.TspData;
 import ch.heig.sio.lab1.tsp.TspTour;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class that compute heuristics metrics on each datafiles located in the 'data' diretory
+ * @author Jarod Streckeisen, Timothée Van Hove
+ */
 public final class Analyze {
 
     private static final double NANO_TO_MILLIS = 1_000_000.0;
@@ -15,8 +18,8 @@ public final class Analyze {
     /***
      * Main function for Statistics calculation.
      * Read all file in "data" folder and perform statistics for every euristics
-     * @param args
-     * @throws IOException
+     * @param args arguments
+     * @throws IOException if data files are not found
      */
     public static void main(String[] args) throws IOException {
         //Map contenant les valeurs optimales pour chaque fichier.

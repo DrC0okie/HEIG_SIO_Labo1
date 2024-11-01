@@ -1,5 +1,9 @@
 package ch.heig.sio.lab1.groupJ;
 
+/**
+ * Utility class that displays the formatted statistics results
+ * @author Jarod Streckeisen, Timothée Van Hove
+ */
 public class StatisticsOutputFormatter {
     /***
      * Pretty print all heuristic's statistics.
